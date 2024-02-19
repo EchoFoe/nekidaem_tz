@@ -15,7 +15,7 @@ class Account(AbstractUser):
         verbose_name_plural = 'Аккаунты'
 
     def __str__(self):
-        return 'Пользователь %s: %s %s' % (self.username, self.first_name, self.last_name)
+        return f'Пользователь: {self.username}'
 
     def get_full_name(self):
         return f'{self.first_name.capitalize()} {self.last_name.capitalize()}'

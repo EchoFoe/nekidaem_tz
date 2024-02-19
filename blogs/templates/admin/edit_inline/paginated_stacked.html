@@ -1,0 +1,35 @@
+{% load i18n admin_urls %}
+
+<div class="inline-group" id="{{ inline_admin_formset.formset.prefix }}-group" data-inline-type="stacked" data-inline-formset="{{ inline_admin_formset.inline_formset_data }}">
+    <fieldset class="module {% if inline_admin_formset.classes %}{{ inline_admin_formset.classes }}{% endif %}">
+        <h2>{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</h2>
+
+        {{ inline_admin_formset.formset.management_form }}
+        {{ inline_admin_formset.formset.non_form_errors }}
+
+        {% for obj in inline_admin_formset.object_list %}
+            <div class="inline-related">
+                <h3>{{ obj }}</h3>
+
+                {% if inline_admin_formset.formset.can_delete %}
+                    <span class="delete">
+                        {{ inline_admin_form.deletion_field.field }}
+                        {{ inline_admin_form.deletion_field.label_tag }}
+                    </span>
+                {% endif %}
+
+                {% for fieldset in inline_admin_form %}
+                    {% include "admin/includes/fieldset.html" %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if inline_admin_formset.page.has_previous %}
+            <a href="?page={{ inline_admin_formset.page.previous_page_number }}">Предыдущая страница</a>
+        {% endif %}
+
+        {% if inline_admin_formset.page.has_next %}
+            <a href="?page={{ inline_admin_formset.page.next_page_number }}">Следующая страница</a>
+        {% endif %}
+    </fieldset>
+</div>
