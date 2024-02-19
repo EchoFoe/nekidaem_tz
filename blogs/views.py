@@ -14,6 +14,7 @@ from .serializers import PostSerializer
 
 
 @swagger_auto_schema(
+    tags=['Блоги'],
     method='post',
     responses={200: 'Подписка оформлена', 404: 'Блог не найден', 400: 'Нельзя подписаться на свой блог'},
     operation_summary='Подписаться на блог пользователя',
@@ -43,6 +44,7 @@ def subscribe_to_blog(request: Any, blog_id: int) -> Response:
 
 
 @swagger_auto_schema(
+    tags=['Блоги'],
     method='post',
     responses={200: 'Подписка отменена', 404: 'Подписка не была найдена', 400: 'Блог не найден'},
     operation_summary='Отписаться от блога пользователя',
@@ -71,6 +73,7 @@ def unsubscribe_from_blog(request: Any, blog_id: int) -> Response:
 
 @swagger_auto_schema(
     method='get',
+    tags=['Новостная лента'],
     responses={200: 'OK'},
     pagination_class=PageNumberPagination,
     operation_summary='Новостная лента',

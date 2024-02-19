@@ -17,6 +17,7 @@ from .serializers import AccountCreateSerializer, AccountSerializer
 
 class AccountCreateAPIView(APIView):
     @swagger_auto_schema(
+        tags=['Аккаунты'],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             required=['username', 'password'],
@@ -53,6 +54,7 @@ class AccountCreateAPIView(APIView):
 class UserDetailAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[],
+        tags=['Аккаунты'],
         responses={200: 'OK', 400: 'Неверный запрос', 404: 'Пользователь не найден'},
         operation_summary='Получение информации о пользователе',
     )
