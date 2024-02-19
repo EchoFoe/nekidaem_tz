@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+
 from .bases import DateTimeBaseModel
 
 
@@ -24,3 +26,17 @@ class Post(DateTimeBaseModel):
 
     def __str__(self):
         return f'Пост {self.title} пользователя: {self.blog.user.username}'
+
+
+class Subscription(DateTimeBaseModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscriptions',
+                             verbose_name='Пользователь')
+    blog = models.ForeignKey('blogs.Blog', on_delete=models.CASCADE, related_name='subscribers', verbose_name='Блог')
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        unique_together = ('user', 'blog')
+
+    def __str__(self):
+        return f'{self.user} подписан на блог {self.blog}'

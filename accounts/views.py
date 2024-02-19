@@ -4,10 +4,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.shortcuts import get_object_or_404
+
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 from .models import Account
 from .serializers import AccountCreateSerializer, AccountSerializer
@@ -23,7 +25,7 @@ class AccountCreateAPIView(APIView):
                 'password': openapi.Schema(type=openapi.TYPE_STRING),
             },
         ),
-        responses={200: 'OK', 400: 'Invalid Request'},
+        responses={200: 'OK', 400: 'Неверный запрос'},
     )
     def post(self, request, *args, **kwargs) -> Union[Response, Dict[str, Any]]:
         """
@@ -51,7 +53,7 @@ class AccountCreateAPIView(APIView):
 class UserDetailAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[],
-        responses={200: 'OK', 400: 'Invalid Request', 404: 'Not Found'},
+        responses={200: 'OK', 400: 'Неверный запрос', 404: 'Пользователь не найден'},
         operation_summary='Получение информации о пользователе',
     )
     def get(self, request, username: Optional[str] = None, user_id: Optional[int] = None) -> Response:
@@ -87,7 +89,10 @@ class UserDetailAPIView(APIView):
         :return: Информация о пользователе или сообщение об ошибке, если пользователь не найден.
         :rtype: Response
         """
-        user = get_object_or_404(Account, username=username)
+        try:
+            user = get_object_or_404(Account, username=username)
+        except Http404:
+            return Response({'error': 'Пользователь не найден'}, status=404)
         serializer = AccountSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -102,6 +107,9 @@ class UserDetailAPIView(APIView):
         :return: Информация о пользователе или сообщение об ошибке, если пользователь не найден.
         :rtype: Response
         """
-        user = get_object_or_404(Account, id=user_id)
+        try:
+            user = get_object_or_404(Account, id=user_id)
+        except Http404:
+            return Response({'error': 'Пользователь не найден'}, status=404)
         serializer = AccountSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
