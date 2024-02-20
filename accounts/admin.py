@@ -12,6 +12,7 @@ class AccountAdmin(admin.ModelAdmin):
     list_display_links = ['username']
     list_filter = ['is_active', 'is_staff', 'is_superuser']
     search_fields = ['username', 'last_name', 'first_name']
+    list_per_page = 50
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Персональная информация', {'fields': (
