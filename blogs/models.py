@@ -5,7 +5,8 @@ from .bases import DateTimeBaseModel
 
 
 class Blog(models.Model):
-    user = models.OneToOneField('accounts.Account', on_delete=models.CASCADE, related_name='blog')
+    user = models.OneToOneField('accounts.Account', on_delete=models.CASCADE, related_name='blog', db_index=True,
+                                verbose_name='Пользователь')
 
     class Meta:
         verbose_name = 'Блог'
@@ -16,7 +17,7 @@ class Blog(models.Model):
 
 
 class Post(DateTimeBaseModel):
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='posts', verbose_name='Блог')
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='posts', db_index=True, verbose_name='Блог')
     title = models.CharField(max_length=100, verbose_name='Заголовок')
     content = models.TextField(max_length=140, blank=True, verbose_name='Текст', help_text='Не более 140 символов')
 
@@ -30,8 +31,9 @@ class Post(DateTimeBaseModel):
 
 class Subscription(DateTimeBaseModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='subscriptions',
-                             verbose_name='Пользователь')
-    blog = models.ForeignKey('blogs.Blog', on_delete=models.CASCADE, related_name='subscribers', verbose_name='Блог')
+                             db_index=True, verbose_name='Пользователь')
+    blog = models.ForeignKey('blogs.Blog', on_delete=models.CASCADE, related_name='subscribers', db_index=True,
+                             verbose_name='Блог')
 
     class Meta:
         verbose_name = 'Подписка'
@@ -44,8 +46,9 @@ class Subscription(DateTimeBaseModel):
 
 class ReadPost(DateTimeBaseModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='read_posts_by_user',
-                             verbose_name='Пользователь')
-    post = models.ForeignKey('blogs.Post', on_delete=models.CASCADE, related_name='read_by_user', verbose_name='Пост')
+                             db_index=True, verbose_name='Пользователь')
+    post = models.ForeignKey('blogs.Post', on_delete=models.CASCADE, related_name='read_by_user', db_index=True,
+                             verbose_name='Пост')
     is_read = models.BooleanField(default=False, verbose_name='Прочитан?')
 
     class Meta:

@@ -1,9 +1,12 @@
 import os
 import os.path
+import logging
 
 from pathlib import Path
 from dotenv import load_dotenv
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 load_dotenv()
 
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +26,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_celery_beat',
     'drf_yasg',
     'accounts',
-    'blogs',
+    'blogs.apps.BlogsConfig',
 ]
 
 MIDDLEWARE = [
@@ -106,3 +110,63 @@ STATICFILES_DIRS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s [%(asctime)s] %(module)s %(message)s'
+        },
+        'simple': {
+            'format': '[%(asctime)s] %(message)s'
+        },
+        'source_trace': {
+            'format': "%(asctime)s [%(name)s] %(filename)s:%(lineno)s%(process)d %(message)s "
+        },
+    },
+    'handlers': {
+        'null': {
+            'level': 'ERROR',
+            'class': 'logging.NullHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'console_simple': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'django': {
+        'handlers': ['console'],  # 'mail_admins'
+        'level': 'INFO',
+        'propagate': True,
+    },
+    'loggers': {
+        'blogs': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    }
+}
