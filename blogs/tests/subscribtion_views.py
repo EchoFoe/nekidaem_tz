@@ -27,7 +27,7 @@ class BlogSubscriptionTestCase(TestCase):
         """
         Тестирование подписки на блог пользователя.
         """
-        url = reverse('subscribe_to_blog', kwargs={'blog_id': self.blog2.id})
+        url = reverse('subscribe-to-blog', kwargs={'blog_id': self.blog2.id})
         self.client.force_authenticate(user=self.user)
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -36,7 +36,7 @@ class BlogSubscriptionTestCase(TestCase):
         """
         Тестирование попытки подписки на собственный блог.
         """
-        url = reverse('subscribe_to_blog', kwargs={'blog_id': self.blog.id})
+        url = reverse('subscribe-to-blog', kwargs={'blog_id': self.blog.id})
         self.client.force_authenticate(user=self.user)
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -46,7 +46,7 @@ class BlogSubscriptionTestCase(TestCase):
         Тестирование отписки от блога пользователя.
         """
         subscription = Subscription.objects.create(user=self.user, blog=self.blog2)
-        url = reverse('unsubscribe_from_blog', kwargs={'blog_id': self.blog2.id})
+        url = reverse('unsubscribe-from-blog', kwargs={'blog_id': self.blog2.id})
         self.client.force_authenticate(user=self.user)
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -55,7 +55,7 @@ class BlogSubscriptionTestCase(TestCase):
         """
         Тестирование отписки от несуществующей подписки.
         """
-        url = reverse('unsubscribe_from_blog', kwargs={'blog_id': self.blog2.id})
+        url = reverse('unsubscribe-from-blog', kwargs={'blog_id': self.blog2.id})
         self.client.force_authenticate(user=self.user)
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
