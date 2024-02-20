@@ -40,3 +40,15 @@ class Subscription(DateTimeBaseModel):
 
     def __str__(self):
         return f'{self.user} подписан на блог {self.blog}'
+
+
+class ReadPost(DateTimeBaseModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='read_posts_by_user',
+                             verbose_name='Пользователь')
+    post = models.ForeignKey('blogs.Post', on_delete=models.CASCADE, related_name='read_by_user', verbose_name='Пост')
+    is_read = models.BooleanField(default=False, verbose_name='Прочитан?')
+
+    class Meta:
+        verbose_name = 'Прочтенный пост'
+        verbose_name_plural = 'Прочтенные посты'
+        unique_together = ('user', 'post')

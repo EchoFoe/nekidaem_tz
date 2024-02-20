@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Blog, Post, Subscription
+from .models import Blog, Post, Subscription, ReadPost
 
 
 class PostInline(admin.StackedInline):
@@ -26,6 +26,7 @@ class BlogAdmin(admin.ModelAdmin):
     inlines = [PostInline]
     list_display = ['id', 'user']
     list_display_links = ['id']
+    list_per_page = 30
     search_fields = ['user', 'id']
 
 
@@ -36,4 +37,16 @@ class SubscriptionAdmin(admin.ModelAdmin):
     save_as = True
     list_display = ['id', 'user', 'blog']
     readonly_fields = ['created_at', 'updated_at']
+    list_per_page = 30
     list_display_links = ['id']
+
+
+@admin.register(ReadPost)
+class ReadPostAdmin(admin.ModelAdmin):
+    """ Админ-панель для ReadPost """
+
+    save_as = True
+    list_display = ['id', 'post', 'user', 'is_read']
+    list_per_page = 30
+    readonly_fields = ['created_at', 'updated_at']
+    list_display_links = ['post']
