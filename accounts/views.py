@@ -14,10 +14,12 @@ from django.http import Http404
 from .models import Account
 from .serializers import AccountCreateSerializer, AccountSerializer
 
+ACCOUNTS = 'Аккаунты'
+
 
 class AccountCreateAPIView(APIView):
     @swagger_auto_schema(
-        tags=['Аккаунты'],
+        tags=[ACCOUNTS],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             required=['username', 'password'],
@@ -54,7 +56,7 @@ class AccountCreateAPIView(APIView):
 class UserDetailAPIView(APIView):
     @swagger_auto_schema(
         manual_parameters=[],
-        tags=['Аккаунты'],
+        tags=[ACCOUNTS],
         responses={200: 'OK', 400: 'Неверный запрос', 404: 'Пользователь не найден'},
         operation_summary='Получение информации о пользователе',
     )

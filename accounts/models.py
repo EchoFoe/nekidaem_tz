@@ -9,6 +9,7 @@ class Account(AbstractUser):
     phone = models.CharField(max_length=15, null=True, blank=True, verbose_name='Телефон')
     surname = models.CharField(max_length=30, blank=True, verbose_name='Отчество')
     date_of_birth = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
+    read_posts = models.ManyToManyField('blogs.Post', blank=True, related_name='read_by')
 
     class Meta:
         verbose_name = 'Аккаунт'
