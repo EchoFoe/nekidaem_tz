@@ -1,6 +1,8 @@
 import random
 import string
 
+from typing import List
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -14,8 +16,8 @@ from accounts.models import Account
 fake = Faker()
 
 
-def generate_username():
-    # Генерация случайного имени пользователя из случайных букв и цифр
+def generate_username() -> str:
+    """ Генерация случайного имени пользователя. """
     username = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
     return username
 
@@ -24,18 +26,18 @@ class Command(BaseCommand):
     help = 'Заполнение БД'
 
     def handle(self, *args, **options):
+        """ Хелпер по хендлеру """
         self.stdout.write(self.style.SUCCESS('Началась загрузка данных в БД...'))
 
         with transaction.atomic():
-            self.stdout.write(self.style.SUCCESS('Загрузка аккаунтов и блогов'))
-            self.create_accounts(10)
-            self.stdout.write(self.style.SUCCESS('Загрузка постов'))
-            self.create_posts(50)
+            self.create_accounts(1000)
+            self.create_posts(5000)
 
         self.stdout.write(self.style.SUCCESS('Загрузка данных прошла успешно!'))
 
-    def create_accounts(self, num_accounts):
-        # Используем tqdm для отображения прогресса
+    def create_accounts(self, num_accounts: int) -> None:
+        """ Создание аккаунтов с их блогами. """
+        self.stdout.write(self.style.SUCCESS('Загрузка аккаунтов и блогов'))
         for _ in tqdm(range(num_accounts), desc='Создание аккаунтов с блогами', unit=' accounts'):
             username = generate_username()
             email = fake.email()
@@ -51,11 +53,10 @@ class Command(BaseCommand):
 
             blog = Blog.objects.create(user=account)
 
-    def create_blogs(self):
-        pass
-
-    def create_posts(self, num_posts):
-        blogs = Blog.objects.all()
+    def create_posts(self, num_posts: int) -> None:
+        """ Создание постов. """
+        self.stdout.write(self.style.SUCCESS('Загрузка постов'))
+        blogs: List[Blog] = Blog.objects.all()
         for _ in tqdm(range(num_posts), desc='Создание постов', unit=' posts'):
             blog = choice(blogs)
             title = fake.sentence()
