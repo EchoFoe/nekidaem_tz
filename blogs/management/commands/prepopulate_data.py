@@ -37,7 +37,6 @@ class Command(BaseCommand):
 
     def create_accounts(self, num_accounts: int) -> None:
         """ Создание аккаунтов с их блогами. """
-        self.stdout.write(self.style.SUCCESS('Загрузка аккаунтов и блогов'))
         for _ in tqdm(range(num_accounts), desc='Создание аккаунтов с блогами', unit=' accounts'):
             username = generate_username()
             email = fake.email()
@@ -55,7 +54,6 @@ class Command(BaseCommand):
 
     def create_posts(self, num_posts: int) -> None:
         """ Создание постов. """
-        self.stdout.write(self.style.SUCCESS('Загрузка постов'))
         blogs: List[Blog] = Blog.objects.all()
         for _ in tqdm(range(num_posts), desc='Создание постов', unit=' posts'):
             blog = choice(blogs)
