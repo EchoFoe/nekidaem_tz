@@ -8,9 +8,9 @@ from django.db import transaction
 
 from faker import Faker
 from random import choice
-from tqdm import tqdm  # Импорт библиотеки для прогресс-бара
+from tqdm import tqdm
 
-from blogs.models import Blog, Post, ReadPost
+from blogs.models import Blog, Post
 from accounts.models import Account
 
 fake = Faker()
@@ -30,8 +30,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Началась загрузка данных в БД...'))
 
         with transaction.atomic():
-            self.create_accounts(1000)
-            self.create_posts(5000)
+            self.create_accounts(200)
+            self.create_posts(1000)
 
         self.stdout.write(self.style.SUCCESS('Загрузка данных прошла успешно!'))
 
