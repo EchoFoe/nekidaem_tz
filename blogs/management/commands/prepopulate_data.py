@@ -30,8 +30,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Началась загрузка данных в БД...'))
 
         with transaction.atomic():
-            self.create_accounts(200)
-            self.create_posts(1000)
+            self.create_accounts(1000)
+            self.create_posts(5000)
 
         self.stdout.write(self.style.SUCCESS('Загрузка данных прошла успешно!'))
 
