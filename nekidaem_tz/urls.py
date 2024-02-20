@@ -9,7 +9,7 @@ schema_view = get_schema_view(
        title="Документация к АПИ",
        default_version='Тестовое задание',
        description="Документация nekidaem_tz",
-       terms_of_service="https://www.example.com/policies/terms/",
+       terms_of_service="",
        contact=openapi.Contact(email="aspirpd@gmail.com"),
        license=openapi.License(name="BSD License"),
    ),
