@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      - db
+      - redis
+      - celery
+      - celery-beat
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_HOST=${DB_HOST}
+      - POSTGRES_PORT=${DB_PORT}
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    command: celery -A nekidaem_tz worker --loglevel=info
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    command: celery -A nekidaem_tz beat --loglevel=info
+    depends_on:
+      - db
+      - redis
