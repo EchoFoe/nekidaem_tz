@@ -160,3 +160,70 @@ def mark_posts_as_read(request: Dict[str, Union[Any, List[int]]]) -> Response:
 
     return Response({'message': f'Посты c IDs: {post_ids} успешно помечены как прочитанные'},
                     status=status.HTTP_200_OK)
+
+
+@swagger_auto_schema(
+    tags=[BLOGS],
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['title', 'content'],
+        properties={
+            'title': openapi.Schema(type=openapi.TYPE_STRING),
+            'content': openapi.Schema(type=openapi.TYPE_STRING),
+        },
+    ),
+    responses={200: 'Пост добавлен', 404: 'Блог не найден или пользователь не имеет прав на добавление поста'},
+    operation_summary='Добавить пост в блог',
+)
+@api_view(['POST'])
+def add_post_to_blog(request: Any, blog_id: int) -> Response:
+    """
+    Добавление поста в блог пользователя.
+
+    :param request: Запрос пользователя.
+    :param blog_id: Идентификатор блога, в который пользователь хочет добавить пост.
+    :return: Сообщение о добавлении поста или ошибке.
+    """
+    try:
+        blog = get_object_or_404(Blog, id=blog_id)
+    except Http404:
+        return Response({'error': 'Блог не найден'}, status=404)
+
+    if blog.user != request.user:
+        return Response({'error': 'Вы можете добавлять посты только в свой собственный блог'}, status=400)
+
+    request.data['blog'] = blog_id
+    serializer = PostSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': f'Пост успешно добавлен в {blog}'}, status=200)
+    else:
+        return Response(serializer.errors, status=400)
+
+
+@swagger_auto_schema(
+    tags=[BLOGS],
+    method='post',
+    responses={200: 'Пост удален', 404: 'Пост не найден или пользователь не имеет прав на удаление'},
+    operation_summary='Удалить пост из блога',
+)
+@api_view(['POST'])
+def delete_post_from_blog(request: Any, post_id: int) -> Response:
+    """
+    Удаление поста из блога пользователя.
+
+    :param request: Запрос пользователя.
+    :param post_id: Идентификатор поста, который пользователь хочет удалить.
+    :return: Сообщение об удалении поста или ошибке.
+    """
+    try:
+        post = Post.objects.filter(id=post_id, blog__user=request.user).first()
+    except Post.DoesNotExist:
+        return Response({'error': 'Посты не найдены'}, status=404)
+
+    if post is None:
+        return Response({'error': 'Вы не можете удалять этот пост, так как он не принадлежит вашему блогу'}, status=404)
+
+    post.delete()
+    return Response({'message': 'Пост успешно удален'}, status=200)
